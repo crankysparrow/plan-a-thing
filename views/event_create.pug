@@ -1,0 +1,37 @@
+extends layout             
+
+block content
+  h1= title
+
+  form(method='POST' action='').two-third-800.half-1000#create-event
+
+    label(for='event_title') Event Title: 
+      input#event_title(type='text' name='event_title')
+
+    div.flex.two
+      label(for='start_date') Start Date: 
+        input#start_date(type='date' name='start_date')
+
+      label(for='end_date') End Date: 
+        input#end_date(type='date' name='end_date')
+
+    hr
+
+    div
+      strong Time Range:
+      div.flex.two
+        label(for='start_time') Start Time: 
+          select(name='start_time', id='start_time')
+            - let i = 0   
+            while i < 48
+              option(value=i)= timeFormattedArr[i]
+              - i += 2 
+
+        label(for='end_time') End Time: 
+          select(name='end_time', id='end_time')   
+            - i = 0   
+            while i < 48
+              option(value=i)= timeFormattedArr[i]
+              - i += 2 
+
+    button(type='submit') Create Event

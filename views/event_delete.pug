@@ -1,0 +1,15 @@
+extends layout
+
+
+block content
+  h1= title
+
+  h2= event.title
+
+  p Start Date: #{event.start_date_f}
+  p End Date: #{event.end_date_f}
+
+  p Really delete this event?
+
+  form(method='POST' action='')
+    button(type='submit') Yes, delete

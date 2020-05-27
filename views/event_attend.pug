@@ -1,0 +1,73 @@
+extends layout
+
+block content
+  h1= title
+
+  h2= event.title
+
+  p Start Date: #{event.start_date_f}
+  p End Date: #{event.end_date_f}
+  p Number of Days: #{event.number_of_days}
+  - var len = event.days.length;
+
+  // Get total number of people who have responded to attend the event so far. 
+  - let total = event.respondents ? event.respondents.length ? event.respondents.length : 0 : 0;
+
+  hr
+
+  form(method='POST' action='').attend-event.third-800
+    div.form-group
+      label(for='name') Your Name:
+      input(type='text' id='name' name='name')
+
+    
+    table.calendar
+      caption Choose the times you are free:
+      tbody
+        tr
+          td
+          // table headers with dates in top row
+          for day in event.days
+            th(scope='col')= day
+
+          // set up variables to loop through time options - from start_time to end_time in 30min increments
+          - let start = event.start_time ? event.start_time : 0;
+          - let end = event.end_time ? event.end_time : 49;
+          - let time = event.start_time;
+
+          while time <= end
+            - let timeFormatted = timeFormattedArr[time];
+
+            // Create row for the current time
+            tr(class='time' + time)
+              // if the time is on the hour (not half hour), give this row a header
+              if time%2 == 0
+                  th(scope='row', rowspan=2)= timeFormatted
+              
+              // create one td cell for this time on each day
+              - let i = 0;
+              while i < event.number_of_days
+                - let people = event.availability[i][time];
+                - let date = event.days[i] + ' ' + timeFormatted
+
+                // set attributes for this td element. data-attending displays the # of people currently responded as available to this date and time.
+                // data-day is a reference to the date of this element (0-indexed)
+                // background color opacity calculated by dividing the number available at this time by total respondents. So more opaque = more avalaible, less opaque = less available.  
+                - 
+                  let attributes = {
+                    class: 'day-data',
+                    'data-attending': people.length,
+                    'data-day': i,
+                    style: 'background-color: rgba(0, 216, 146,' + people.length/(total+1) + ');',
+                  }
+                - let id = i + '-' + time                
+                td&attributes(attributes)
+                  input(type='checkbox' id=id name='dates' value=id)
+                  label(for=id)
+                    span.hidden= date                  
+                - i++;
+
+            - time++;
+
+
+    button(type='submit') Enter Your Availability 

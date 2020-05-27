@@ -1,0 +1,96 @@
+extends layout
+
+//- mixin timerow(days, time, timeFormatted, availability)
+//-   - let i = 0;
+//-   while i < days
+//-     - let attending = availability[i][time].length;
+//-     - let date = event.days[i] + ' ' + timeFormatted;
+//-     td(data-day=i class='day-data attending-' + attending)
+//-       span.hidden= date
+//-     - i++;
+
+//- mixin filltimes(len, availability)
+//-   - 
+//-     let timeFormattedArr = [
+//-         '12:00am', '12:30am', '1:00am', '1:30am', '2:00am', '2:30am', '3:00am', '3:30am', '4:00am', '4:30am', '5:00am', '5:30am', '6:00am', '6:30am', '7:00am', '7:30am', '8:00am', '8:30am', '9:00am', '9:30am', '10:00am', '10:30am', '11:00am', '11:30am',
+//-         '12:00pm', '12:30pm', '1:00pm', '1:30pm', '2:00pm', '2:30pm', '3:00pm', '3:30pm', '4:00pm', '4:30pm', '5:00pm', '5:30pm', '6:00pm', '6:30pm', '7:00pm', '7:30pm', '8:00pm', '8:30pm', '9:00pm', '9:30pm', '10:00pm', '10:30pm', '11:00pm', '11:30pm',];
+//-   - let time = 0;
+//-   while time < 48
+//-     if time%2 == 0
+//-       tr(class='time' + time)
+//-         th(scope='row', rowspan=2)= timeFormattedArr[time]
+//-         +timerow(len, time, timeFormattedArr[time], availability)
+//-     else
+//-       tr(class='time'+time)
+//-         +timerow(len, time, timeFormattedArr[time], availability)
+//-     - time++;
+
+
+block content
+  h1= title
+
+
+  h2= event.title
+
+  p Start Date: #{event.start_date_f}
+  p End Date: #{event.end_date_f}
+  p Number of Days: #{event.number_of_days}
+
+  - let respondents = event.respondents;
+  - let total = respondents.length ? respondents.length : 0;
+  if respondents.length
+    hr
+    
+    div.people
+      h3 Responded so far:
+      ul
+        for person in respondents
+          li= person
+
+  if event.availability && event.availability.length 
+    table.calendar
+      tbody
+        tr
+          td
+          for day in event.days
+            th(scope='col')= day
+
+          - let time = event.start_time;
+          
+          if time%2 != 0 
+            - time--;
+
+          while (time <= event.end_time)
+            - let timeFormatted = timeFormattedArr[time];
+
+            tr(class='time' + time)
+              if time%2 == 0
+                  th(scope='row', rowspan=2)= timeFormatted
+              - let i = 0;
+
+              while i < event.number_of_days
+                if event.availability[i][time] 
+                  - let people = event.availability[i] ? event.availability[i][time] : 0;
+                  - let date = event.days[i] + ' ' + timeFormatted
+                  - 
+                    let attributes = {
+                      class: 'day-data attending-' ,
+                      style: 'background-color: rgba(0, 216, 146,' + people.length/(total+1) + ');'
+                    }
+                    if (people.length > 0) {
+                      attributes['data-tooltip'] = people.join(' \n ');
+                    }
+                  td(data-day=i)&attributes(attributes)
+                    span.hidden= date
+
+                - i++;
+
+            - time++;
+
+  hr 
+
+  div.attend-link 
+    a(href= '/scheduler/event/' + event._id + '/attend' ) Attend this event
+
+  div.delete-link
+    a(href='/scheduler/event/' + event._id + '/delete') Delete this event

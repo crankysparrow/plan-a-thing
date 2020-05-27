@@ -1,0 +1,12 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/css/styles.css')
+    //- link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/picnic@6.5.2/picnic.min.css')
+  nav.nav
+    a(href='/scheduler').pseudo.cool.button.icon-calendar Scheduler
+
+  body
+    block content
+  script(type='text/javascript' src='/javascripts/index.js' )
